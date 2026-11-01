@@ -1,3 +1,102 @@
-import Link from 'next/link';import {notFound} from 'next/navigation';import {findIssue,issues} from '@/lib/content';
-export function generateStaticParams(){return issues.map(i=>({slug:i.slug}))}
-export default async function IssuePage({params}:{params:Promise<{slug:string}>}){const {slug}=await params;const issue=findIssue(slug);if(!issue)notFound();return <main><section className="container-site pt-20 pb-14"><p className="eyebrow mb-6">Issue {issue.number} / {issue.month} {issue.year}</p><h1 className="text-6xl md:text-8xl max-w-5xl">{issue.title}</h1><p className="mt-8 text-xl text-neutral-600">{issue.subtitle}</p><a className="inline-block mt-8 border-b border-black pb-2 text-sm" href={'/api/pdf/'+issue.slug}>DOWNLOAD PDF ↓</a></section><div className="frame h-[60vh]"><img src={issue.cover} alt={issue.title}/></div><section className="container-site max-w-4xl py-20"><p className="eyebrow mb-5">Editor's note</p><p className="text-2xl md:text-3xl font-serif leading-relaxed">{issue.introduction}</p></section><div className="container-site space-y-24">{issue.photos.map((photo,index)=><article key={photo.slug}><Link href={'/photos/'+photo.slug}><div className="frame h-[55vh] md:h-[80vh]"><img src={photo.image} alt={photo.title}/></div></Link><div className="grid md:grid-cols-2 gap-8 py-8 border-b border-black/20"><div><p className="eyebrow">Frame {String(index+1).padStart(2,'0')}</p><h2 className="text-4xl mt-3">{photo.title}</h2><p className="text-neutral-500 mt-3">{photo.location}</p></div><div><p className="leading-7 text-neutral-700">{photo.story}</p><Link className="inline-block mt-5 text-sm border-b border-black pb-2" href={'/photos/'+photo.slug}>READ THE STORY ↗</Link></div></div></article>)}</div></main>}
+
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { getPublishedIssues } from "@/lib/live-content";
+
+export const dynamic = "force-dynamic";
+
+export default async function IssuePage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+
+  const issues = await getPublishedIssues();
+  const issue = issues.find((i) => i.slug === slug);
+
+  if (!issue) notFound();
+
+  return (
+    <main>
+      <section className="container-site pt-20 pb-14">
+        <p className="eyebrow mb-6">
+          Issue {issue.number} / {issue.month} {issue.year}
+        </p>
+
+        <h1 className="text-6xl md:text-8xl max-w-5xl">
+          {issue.title}
+        </h1>
+
+        <p className="mt-8 text-xl text-neutral-600">
+          {issue.subtitle}
+        </p>
+
+        <a
+          className="inline-block mt-8 border-b border-black pb-2 text-sm"
+          href={"/api/pdf/" + issue.slug}
+        >
+          DOWNLOAD PDF ↓
+        </a>
+      </section>
+
+      {issue.cover && (
+        <div className="frame h-[60vh]">
+          <img src={issue.cover} alt={issue.title} />
+        </div>
+      )}
+
+      <section className="container-site max-w-4xl py-20">
+        <p className="eyebrow mb-5">Editor's note</p>
+
+        <p className="text-2xl md:text-3xl font-serif leading-relaxed">
+          {issue.introduction}
+        </p>
+      </section>
+
+      <div className="container-site space-y-24">
+        {issue.photos.map((photo, index) => (
+          <article key={photo.slug}>
+            <Link href={"/photos/" + photo.slug}>
+              <div className="frame h-[55vh] md:h-[80vh]">
+                <img
+                  src={photo.image}
+                  alt={photo.title}
+                />
+              </div>
+            </Link>
+
+            <div className="grid md:grid-cols-2 gap-8 py-8 border-b border-black/20">
+              <div>
+                <p className="eyebrow">
+                  Frame {String(index + 1).padStart(2, "0")}
+                </p>
+
+                <h2 className="text-4xl mt-3">
+                  {photo.title}
+                </h2>
+
+                <p className="text-neutral-500 mt-3">
+                  {photo.location}
+                </p>
+              </div>
+
+              <div>
+                <p className="leading-7 text-neutral-700">
+                  {photo.story}
+                </p>
+
+                <Link
+                  className="inline-block mt-5 text-sm border-b border-black pb-2"
+                  href={"/photos/" + photo.slug}
+                >
+                  READ THE STORY ↗
+                </Link>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </main>
+  );
+}
