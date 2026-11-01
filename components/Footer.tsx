@@ -1,0 +1,1 @@
+export default function Footer(){return <footer className="container-site border-t border-black/15 py-10 mt-24 flex flex-wrap gap-4 justify-between text-xs tracking-wider"><span>© {new Date().getFullYear()} FICTIONAL FRAMES</span><a href="https://www.instagram.com/fictionalframes.ph/" target="_blank" rel="noreferrer">INSTAGRAM ↗</a></footer>}
