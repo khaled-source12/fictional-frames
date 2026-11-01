@@ -67,13 +67,16 @@ export default async function PhotoPage({
         {photo.title}
       </h1>
 
-      <div className="frame min-h-[400px] max-h-[80vh]">
-        <img
-          className="max-h-[80vh] w-full object-contain"
-          src={photo.image}
-          alt={photo.title}
-        />
-      </div>
+      
+<div className="flex w-full items-center justify-center bg-neutral-100 p-3 md:p-6">
+  <img
+    src={photo.image}
+    alt={photo.title}
+    className="block h-auto w-auto max-w-full object-contain"
+    style={{ maxHeight: "65vh" }}
+  />
+</div>
+
 
       <div className="grid md:grid-cols-2 gap-12 mt-16">
         <section>
